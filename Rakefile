@@ -17,11 +17,12 @@ Jeweler::Tasks.new do |gem|
   gem.name = "opengraph_parser"
   gem.homepage = "http://github.com/huyha85/opengraph_parser"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{A simple Ruby library for parsing Open Graph Protocol information from a website.}
+  gem.description = %Q{A simple Ruby library for parsing Open Graph Protocol information from a website. It also includes a fallback solution when the website has no Open Graph information.}
   gem.email = "hhuy424@gmail.com"
-  gem.authors = ["Huy Ha"]
+  gem.authors = ["Huy Ha", "Duc Trinh"]
   # dependencies defined in Gemfile
+  gem.files = Dir.glob('lib/**/*.rb')
 end
 Jeweler::RubygemsDotOrgTasks.new
 
