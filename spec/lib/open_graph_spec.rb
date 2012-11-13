@@ -47,13 +47,13 @@ describe OpenGraph do
           response = double(body: File.open("#{File.dirname(__FILE__)}/../view/opengraph_no_metadata.html", 'r') { |f| f.read })
           RedirectFollower.stub(:new) { double(resolve: response) }
 
-          og = OpenGraph.new("http://test.host")
-          og.src.should == "http://test.host"
+          og = OpenGraph.new("http://test.host/child_page")
+          og.src.should == "http://test.host/child_page"
           og.title.should == "OpenGraph Title Fallback"
           og.type.should be_nil
-          og.url.should == "http://test.host"
+          og.url.should == "http://test.host/child_page"
           og.description.should == "Short Description Fallback"
-          og.images.should == ["http://test.host:80/images/wall1.jpg", "http://test.host:80/images/wall2.jpg"]
+          og.images.should == ["http://test.host/images/wall1.jpg", "http://test.host/child_page/../images/wall2.jpg"]
         end
       end
     end

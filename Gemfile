@@ -11,4 +11,5 @@ group :development do
   gem "bundler"
   gem "jeweler"
   gem "nokogiri"
+  gem "addressable"
 end

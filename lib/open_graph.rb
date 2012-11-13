@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'redirect_follower'
+require "addressable/uri"
 
 class OpenGraph
   attr_accessor :src, :url, :type, :title, :description, :images, :metadata, :response
@@ -13,6 +14,7 @@ class OpenGraph
     check_images_path
   end
 
+  private
   def parse_opengraph
     begin
       @response = RedirectFollower.new(@src).resolve
@@ -60,19 +62,19 @@ class OpenGraph
   end
 
   def check_images_path
-    uri = URI.parse(URI.escape(@src))
+    uri = Addressable::URI.parse(@src)
     imgs = @images.dup
     @images = []
     imgs.each do |img|
-      if URI.parse(URI.escape(img)).host.nil?
-        add_image("#{uri.scheme}://#{uri.host}:#{uri.port}#{img}")
+      if Addressable::URI.parse(img).host.nil?
+        full_path = generate_path(img, uri)
+        add_image(full_path)
       else
         add_image(img)
       end
     end
   end
 
-  private
   def add_image(image_url)
     @images << image_url unless @images.include?(image_url) || image_url.to_s.empty?
   end
@@ -80,6 +82,17 @@ class OpenGraph
   def fetch_images(doc, xpath_str, attr)
     doc.xpath(xpath_str).each do |link|
       add_image(link.attribute(attr).to_s.strip)
+    end
+  end
+
+  def generate_path(relative_path, uri)
+    host = "#{uri.scheme}://#{uri.host}#{':' + uri.port.to_s if uri.port}"
+    if relative_path.start_with?('/')
+      "#{host}#{relative_path}"
+    elsif uri.path.to_s.end_with?('/')
+      "#{host}#{uri.path}#{relative_path}"
+    else
+      "#{host}#{uri.path}/#{relative_path}"
     end
   end
 end
