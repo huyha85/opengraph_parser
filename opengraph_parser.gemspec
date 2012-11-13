@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "opengraph_parser"
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Huy Ha", "Duc Trinh"]
-  s.date = "2012-11-12"
+  s.date = "2012-11-13"
   s.description = "A simple Ruby library for parsing Open Graph Protocol information from a website. It also includes a fallback solution when the website has no Open Graph information."
   s.email = "hhuy424@gmail.com"
   s.extra_rdoc_files = [
@@ -36,12 +36,14 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<bundler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<nokogiri>, [">= 0"])
+      s.add_development_dependency(%q<addressable>, [">= 0"])
     else
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<rdoc>, [">= 0"])
       s.add_dependency(%q<bundler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<nokogiri>, [">= 0"])
+      s.add_dependency(%q<addressable>, [">= 0"])
     end
   else
     s.add_dependency(%q<rspec>, [">= 0"])
@@ -49,6 +51,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<bundler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<nokogiri>, [">= 0"])
+    s.add_dependency(%q<addressable>, [">= 0"])
   end
 end
 
