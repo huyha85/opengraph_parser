@@ -46,17 +46,17 @@ class OpenGraph
     if @response && @response.body
       doc = Nokogiri.parse(@response.body)
 
-      if @title.to_s.empty? && doc.xpath("//head/title").size > 0
-        @title = doc.xpath("//head/title").first.text.to_s.strip
+      if @title.to_s.empty? && doc.xpath("//head//title").size > 0
+        @title = doc.xpath("//head//title").first.text.to_s.strip
       end
 
       @url = @src if @url.to_s.empty?
 
-      if @description.to_s.empty? && description_meta = doc.xpath("//head/meta[@name='description']").first
+      if @description.to_s.empty? && description_meta = doc.xpath("//head//meta[@name='description']").first
         @description = description_meta.attribute("content").to_s.strip
       end
 
-      fetch_images(doc, "//head/link[@rel='image_src']", "href") if @images.empty?
+      fetch_images(doc, "//head//link[@rel='image_src']", "href") if @images.empty?
       fetch_images(doc, "//img", "src") if @images.empty?
     end
   end
