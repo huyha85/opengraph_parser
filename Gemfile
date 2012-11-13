@@ -10,6 +10,7 @@ group :development do
   gem "rdoc"
   gem "bundler"
   gem "jeweler"
-  gem "nokogiri"
-  gem "addressable"
 end
+
+gem "nokogiri"
+gem "addressable"
