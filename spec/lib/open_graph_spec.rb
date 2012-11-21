@@ -23,6 +23,33 @@ describe OpenGraph do
         og.url.should == "http://test.host"
         og.description.should == "My OpenGraph sample site for Rspec"
         og.images.should == ["http://test.host/images/rock1.jpg", "http://test.host/images/rock2.jpg"]
+        og.original_images.should == ["http://test.host/images/rock1.jpg", "/images/rock2.jpg"]
+        og.metadata.should == {
+          title: [{_value: "OpenGraph Title"}],
+          type: [{_value: "article"}],
+          url: [{_value: "http://test.host"}],
+          description: [{_value: "My OpenGraph sample site for Rspec"}],
+          image: [
+            {
+              _value: "http://test.host/images/rock1.jpg",
+              width: [{ _value: "300" }],
+              height: [{ _value: "300" }]
+            },
+            {
+              _value: "/images/rock2.jpg",
+              height: [{ _value: "1000" }]
+            }
+          ],
+          locale: [
+            {
+              _value: "en_GB",
+              alternate: [
+                { _value: "fr_FR" },
+                { _value: "es_ES" }
+              ]
+            }
+          ]
+        }
       end
     end
 
@@ -53,7 +80,7 @@ describe OpenGraph do
           og.type.should be_nil
           og.url.should == "http://test.host/child_page"
           og.description.should == "Short Description Fallback"
-          og.images.should == ["http://test.host/images/wall1.jpg", "http://test.host/child_page/../images/wall2.jpg"]
+          og.images.should == ["http://test.host/images/wall1.jpg", "http://test.host/images/wall2.jpg"]
         end
       end
     end

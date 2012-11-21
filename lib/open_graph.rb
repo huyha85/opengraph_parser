@@ -3,7 +3,7 @@ require 'redirect_follower'
 require "addressable/uri"
 
 class OpenGraph
-  attr_accessor :src, :url, :type, :title, :description, :images, :metadata, :response
+  attr_accessor :src, :url, :type, :title, :description, :images, :metadata, :response, :original_images
 
   def initialize(src, fallback = true)
     @src = src
@@ -29,13 +29,13 @@ class OpenGraph
       doc.css('meta').each do |m|
         if m.attribute('property') && m.attribute('property').to_s.match(/^og:(.+)$/i)
           m_content = m.attribute('content').to_s.strip
-          case metadata_name = m.attribute('property').to_s.gsub("og:", "")
+          metadata_name = m.attribute('property').to_s.gsub("og:", "")
+          @metadata = add_metadata(@metadata, metadata_name, m_content)
+          case metadata_name
             when *attrs_list
               self.instance_variable_set("@#{metadata_name}", m_content) unless m_content.empty?
             when "image"
               add_image(m_content)
-            else
-              @metadata[m.attribute('property').to_s] = m_content
           end
         end
       end
@@ -62,12 +62,13 @@ class OpenGraph
   end
 
   def check_images_path
+    @original_images = @images.dup
     uri = Addressable::URI.parse(@src)
     imgs = @images.dup
     @images = []
     imgs.each do |img|
       if Addressable::URI.parse(img).host.nil?
-        full_path = generate_path(img, uri)
+        full_path = uri.join(img).to_s
         add_image(full_path)
       else
         add_image(img)
@@ -85,14 +86,25 @@ class OpenGraph
     end
   end
 
-  def generate_path(relative_path, uri)
-    host = "#{uri.scheme}://#{uri.host}#{':' + uri.port.to_s if uri.port}"
-    if relative_path.start_with?('/')
-      "#{host}#{relative_path}"
-    elsif uri.path.to_s.end_with?('/')
-      "#{host}#{uri.path}#{relative_path}"
+  def add_metadata(metadata_container, path, content)
+    path_elements = path.split(':')
+    if path_elements.size > 1
+      current_element = path_elements.delete_at(0)
+      path = path_elements.join(':')
+      if metadata_container[current_element.to_sym]
+        path_pointer = metadata_container[current_element.to_sym].last
+        index_count = metadata_container[current_element.to_sym].size
+        metadata_container[current_element.to_sym][index_count - 1] = add_metadata(path_pointer, path, content)
+        metadata_container
+      else
+        metadata_container[current_element.to_sym] = []
+        metadata_container[current_element.to_sym] << add_metadata({}, path, content)
+        metadata_container
+      end
     else
-      "#{host}#{uri.path}/#{relative_path}"
+      metadata_container[path.to_sym] ||= []
+      metadata_container[path.to_sym] << {'_value'.to_sym => content}
+      metadata_container
     end
   end
 end
