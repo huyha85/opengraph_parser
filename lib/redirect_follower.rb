@@ -1,4 +1,4 @@
-require 'net/http'
+require 'net/https'
 
 class RedirectFollower
   class TooManyRedirects < StandardError; end
@@ -12,7 +12,15 @@ class RedirectFollower
   def resolve
     raise TooManyRedirects if redirect_limit < 0
 
-    self.response = Net::HTTP.get_response(URI.parse(URI.escape(url)))
+    uri = URI.parse(URI.escape(url))
+    if uri.scheme == 'https'
+      https = Net::HTTP.new(uri.host, 443)
+      https.use_ssl = true
+      https.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      self.response = https.request_get(uri.request_uri)
+    else
+      self.response = Net::HTTP.get_response(uri)
+    end
 
     if response.kind_of?(Net::HTTPRedirection)
       self.url = redirect_url
