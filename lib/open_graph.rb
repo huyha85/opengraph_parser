@@ -17,7 +17,7 @@ class OpenGraph
   private
   def parse_opengraph
     begin
-      @response = RedirectFollower.new(@src).resolve
+      @response = RedirectFollower.new(@src, :headers => {'User-Agent' => 'Ruby/opengraph_parser'}).resolve
     rescue
       @title = @url = @src
       return

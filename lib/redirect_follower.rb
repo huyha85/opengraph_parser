@@ -5,8 +5,13 @@ class RedirectFollower
 
   attr_accessor :url, :body, :redirect_limit, :response
 
-  def initialize(url, limit = 5)
+  def initialize(url, limit = 5, options = {})
+    if limit.is_a? Hash
+      options = limit
+      limit = 5
+    end
     @url, @redirect_limit = url, limit
+    @headers = options[:headers]
   end
 
   def resolve
@@ -14,13 +19,13 @@ class RedirectFollower
 
     uri = URI.parse(URI.escape(url))
     if uri.scheme == 'https'
-      https = Net::HTTP.new(uri.host, 443)
-      https.use_ssl = true
-      https.verify_mode = OpenSSL::SSL::VERIFY_PEER
-      self.response = https.request_get(uri.request_uri)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     else
-      self.response = Net::HTTP.get_response(uri)
+      http = Net::HTTP.new(uri.host, uri.port)
     end
+    self.response = http.request_get(uri.request_uri, @headers)
 
     if response.kind_of?(Net::HTTPRedirection)
       self.url = redirect_url
