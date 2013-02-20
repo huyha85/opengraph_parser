@@ -1,0 +1,18 @@
+Version 0.2.0
+- Support HTTPS
+- Add original_images attribute
+- Refactor method converting relative url to absolute url
+- Generic structure for metadata
+
+Version 0.1.3
+- Fix Gemfile
+
+Version 0.1.2
+- Modify xpath for fallback searching in <head> tag to work in un-wellformed xml format.
+
+Version 0.1.1
+- Use addressable gem to handle better url
+- Check image urls to handle both relative and absolute urls.
+
+Version 0.1.0
+- Implement OpenGraph library
