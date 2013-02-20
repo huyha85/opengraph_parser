@@ -17,7 +17,7 @@ describe RedirectFollower do
 
         res = RedirectFollower.new(url).resolve
         res.body.should == "Body is here."
-        res.redirect_limit.should == 5
+        res.redirect_limit.should == RedirectFollower::REDIRECT_DEFAULT_LIMIT
       end
 
       describe "and uri scheme is HTTPS" do
@@ -30,19 +30,28 @@ describe RedirectFollower do
 
           res = RedirectFollower.new(https_url).resolve
           res.body.should == "Body is here."
-          res.redirect_limit.should == 5
+          res.redirect_limit.should == RedirectFollower::REDIRECT_DEFAULT_LIMIT
+        end
+      end
+
+      describe "and has headers option" do
+        it "should add headers when retrieve the uri" do
+          Net::HTTP.should_receive(:get_response).with(URI.parse(URI.escape(url)), {'User-Agent' => 'My Custom User-Agent'}).and_return(mock_res)
+          res = RedirectFollower.new(url, {:headers => {'User-Agent' => 'My Custom User-Agent'}}).resolve
+          res.body.should == "Body is here."
+          res.redirect_limit.should == RedirectFollower::REDIRECT_DEFAULT_LIMIT
         end
       end
     end
 
     context "with redirection" do
       it "should follow the link in redirection" do
-        Net::HTTP.should_receive(:get_response).with(URI.parse(URI.escape(url))).and_return(mock_redirect)
-        Net::HTTP.should_receive(:get_response).with(URI.parse(URI.escape("http://new.test.host"))).and_return(mock_res)
+        Net::HTTP.should_receive(:get_response).with(URI.parse(URI.escape(url)), {}).and_return(mock_redirect)
+        Net::HTTP.should_receive(:get_response).with(URI.parse(URI.escape("http://new.test.host")), {}).and_return(mock_res)
 
         res = RedirectFollower.new(url).resolve
         res.body.should == "Body is here."
-        res.redirect_limit.should == 4
+        res.redirect_limit.should == RedirectFollower::REDIRECT_DEFAULT_LIMIT - 1
       end
     end
 

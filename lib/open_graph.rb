@@ -5,19 +5,23 @@ require "addressable/uri"
 class OpenGraph
   attr_accessor :src, :url, :type, :title, :description, :images, :metadata, :response, :original_images
 
-  def initialize(src, fallback = true)
+  def initialize(src, fallback = true, options = {})
+    if fallback.is_a? Hash
+      options = fallback
+      fallback = true
+    end
     @src = src
     @images = []
     @metadata = {}
-    parse_opengraph
+    parse_opengraph(options)
     load_fallback if fallback
     check_images_path
   end
 
   private
-  def parse_opengraph
+  def parse_opengraph(options = {})
     begin
-      @response = RedirectFollower.new(@src).resolve
+      @response = RedirectFollower.new(@src, options).resolve
     rescue
       @title = @url = @src
       return
