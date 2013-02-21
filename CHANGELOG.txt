@@ -1,3 +1,6 @@
+Version 0.2.2
+- Fix major bug on 0.2.1 causing normal http request not working.
+
 Version 0.2.1
 - Allow user to add custom headers when requesting URL
 
