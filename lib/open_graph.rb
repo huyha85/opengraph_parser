@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'redirect_follower'
 require "addressable/uri"
+require 'uri'
 
 class OpenGraph
   attr_accessor :src, :url, :type, :title, :description, :images, :metadata, :response, :original_images
@@ -11,6 +12,7 @@ class OpenGraph
       fallback = true
     end
     @src = src
+    @body = nil
     @images = []
     @metadata = {}
     parse_opengraph(options)
@@ -21,15 +23,19 @@ class OpenGraph
   private
   def parse_opengraph(options = {})
     begin
-      @response = RedirectFollower.new(@src, options).resolve
+      if @src.include? '</html>'
+        @body = @src
+      else
+        @body = RedirectFollower.new(@src, options).resolve.body
+      end
     rescue
       @title = @url = @src
       return
     end
 
-    if @response && @response.body
+    if @body
       attrs_list = %w(title url type description)
-      doc = Nokogiri.parse(@response.body)
+      doc = Nokogiri.parse(@body)
       doc.css('meta').each do |m|
         if m.attribute('property') && m.attribute('property').to_s.match(/^og:(.+)$/i)
           m_content = m.attribute('content').to_s.strip
@@ -47,8 +53,8 @@ class OpenGraph
   end
 
   def load_fallback
-    if @response && @response.body
-      doc = Nokogiri.parse(@response.body)
+    if @body
+      doc = Nokogiri.parse(@body)
 
       if @title.to_s.empty? && doc.xpath("//head//title").size > 0
         @title = doc.xpath("//head//title").first.text.to_s.strip
