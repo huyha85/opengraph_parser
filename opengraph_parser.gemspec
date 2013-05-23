@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "opengraph_parser"
-  s.version = "0.2.2"
+  s.version = "0.2.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Huy Ha", "Duc Trinh"]
-  s.date = "2013-02-21"
+  s.date = "2013-05-23"
   s.description = "A simple Ruby library for parsing Open Graph Protocol information from a website. It also includes a fallback solution when the website has no Open Graph information."
   s.email = "hhuy424@gmail.com"
   s.extra_rdoc_files = [
@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/huyha85/opengraph_parser"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.24"
+  s.rubygems_version = "1.8.10"
   s.summary = "A simple Ruby library for parsing Open Graph Protocol information from a website."
 
   if s.respond_to? :specification_version then
