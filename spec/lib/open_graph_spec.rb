@@ -84,5 +84,20 @@ describe OpenGraph do
         end
       end
     end
+
+    context "with body" do
+      it "should parse body instead of downloading it" do
+        content = File.read("#{File.dirname(__FILE__)}/../view/opengraph.html")
+        RedirectFollower.should_not_receive(:new)
+
+        og = OpenGraph.new(content)
+        og.src.should == content
+        og.title.should == "OpenGraph Title"
+        og.type.should == "article"
+        og.url.should == "http://test.host"
+        og.description.should == "My OpenGraph sample site for Rspec"
+        og.images.should == ["http://test.host/images/rock1.jpg", "/images/rock2.jpg"]
+      end
+    end
   end
 end
