@@ -5,11 +5,15 @@ http://ogp.me
 
 ## Installation
 
+```bash
   gem install opengraph_parser
+```
 
 or add to Gemfile
 
+```bash
   gem "opengraph_parser"
+```
 
 ## Usage
 
