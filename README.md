@@ -20,7 +20,7 @@ og.type # => "website"
 og.url # => "http://ogp.me/"
 og.description # => "The Open Graph protocol enables any web page to become a rich object in a social graph."
 og.images # => ["http://ogp.me/logo.png"]
-``
+```
 
 You can also get other Open Graph metadata as:
 
