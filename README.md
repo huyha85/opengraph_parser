@@ -17,6 +17,8 @@ or add to Gemfile
 
 ## Usage
 
+### Parsing an URL
+
 ```ruby
 og = OpenGraph.new("http://ogp.me")
 og.title # => "Open Graph protocol"
@@ -32,6 +34,19 @@ You can also get other Open Graph metadata as:
 og.metadata # => {"og:image:type"=>"image/png", "og:image:width"=>"300", "og:image:height"=>"300"}
 ```
 
+### Parsing a HTML document
+
+```ruby
+og = OpenGraph.new(html_string)
+```
+
+### Custom header fields
+In some cases you may need to change fields in HTTP request header for an URL
+```ruby
+og = OpenGraph.new("http://opg.me", { :headers => {'User-Agent' => 'Custom User Agent'} })
+```
+
+### Fallback
 If you try to parse Open Graph information for a website that doesn’t have any Open Graph metadata, the library will try to find other information in the website as the following rules:
 
   <title> for title
