@@ -1,6 +1,6 @@
 # OpengraphParser
 
-OpengraphParser is a simple Ruby library for parsing Open Graph protocol information from a web site. Learn more about the protocol at:
+OpengraphParser is a simple Ruby library for parsing Open Graph protocol information from a website. Learn more about the protocol at:
 http://ogp.me
 
 ## Installation
