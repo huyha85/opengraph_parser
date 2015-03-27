@@ -66,6 +66,10 @@ class OpenGraph
         @description = description_meta.attribute("content").to_s.strip
       end
 
+      if @description.to_s.empty?
+        @description = fetch_first_text(doc)
+      end
+
       fetch_images(doc, "//head//link[@rel='image_src']", "href") if @images.empty?
       fetch_images(doc, "//img", "src") if @images.empty?
     end
@@ -93,6 +97,13 @@ class OpenGraph
   def fetch_images(doc, xpath_str, attr)
     doc.xpath(xpath_str).each do |link|
       add_image(link.attribute(attr).to_s.strip)
+    end
+  end
+
+  def fetch_first_text(doc)
+    doc.xpath('//p').each do |p|
+      s = p.text.to_s.strip
+      return s if s.length > 20
     end
   end
 

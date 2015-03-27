@@ -83,6 +83,21 @@ describe OpenGraph do
           og.images.should == ["http://test.host/images/wall1.jpg", "http://test.host/images/wall2.jpg"]
         end
       end
+
+      context "when website has no opengraph metadata nor description" do
+        it "should lookup for other data from website" do
+          response = double(body: File.open("#{File.dirname(__FILE__)}/../view/opengraph_no_meta_nor_description.html", 'r') { |f| f.read })
+          RedirectFollower.stub(:new) { double(resolve: response) }
+
+          og = OpenGraph.new("http://test.host/child_page")
+          og.src.should == "http://test.host/child_page"
+          og.title.should == "OpenGraph Title Fallback"
+          og.type.should be_nil
+          og.url.should == "http://test.host/child_page"
+          og.description.should == "No description meta here."
+          og.images.should == ["http://test.host/images/wall1.jpg", "http://test.host/images/wall2.jpg"]
+        end
+      end
     end
 
     context "with body" do
