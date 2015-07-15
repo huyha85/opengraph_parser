@@ -49,9 +49,9 @@ og = OpenGraph.new("http://opg.me", { :headers => {'User-Agent' => 'Custom User 
 ### Fallback
 If you try to parse Open Graph information for a website that doesn’t have any Open Graph metadata, the library will try to find other information in the website as the following rules:
 
-  <title> for title
-  <meta name="description"> for description
-  <link rel="image_src"> or all <img> tags for images
+* `<title>` for title
+* `<meta name="description">` for description
+* `<link rel="image_src">` or all `<img>` tags for images
 
 You can disable this fallback lookup by passing false to init method:
 
