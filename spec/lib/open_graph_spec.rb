@@ -11,6 +11,14 @@ describe OpenGraph do
       end
     end
 
+    context "with redirect_limit in options hash" do
+      it "should pass redirect_limit to RedirectFollower" do
+        RedirectFollower.should_receive(:new).with("http://test.host", redirect_limit: 20)
+
+        og = OpenGraph.new("http://test.host", redirect_limit: 20)
+      end
+    end
+
     context "with no fallback" do
       it "should get values from opengraph metadata" do
         response = double(body: File.open("#{File.dirname(__FILE__)}/../view/opengraph.html", 'r') { |f| f.read })
