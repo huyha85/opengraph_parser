@@ -88,6 +88,7 @@ class OpenGraph
         add_image(img)
       end
     end
+  rescue Exception => ex
   end
 
   def add_image(image_url)
