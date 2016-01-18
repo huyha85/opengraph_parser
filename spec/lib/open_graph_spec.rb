@@ -11,6 +11,14 @@ describe OpenGraph do
       end
     end
 
+    context "with redirect_limit in options hash" do
+      it "should pass redirect_limit to RedirectFollower" do
+        RedirectFollower.should_receive(:new).with("http://test.host", redirect_limit: 20)
+
+        og = OpenGraph.new("http://test.host", redirect_limit: 20)
+      end
+    end
+
     context "with no fallback" do
       it "should get values from opengraph metadata" do
         response = double(body: File.open("#{File.dirname(__FILE__)}/../view/opengraph.html", 'r') { |f| f.read })
@@ -101,6 +109,23 @@ describe OpenGraph do
     end
 
     context "with body" do
+      context "with comment on html" do
+        it "should parse body instead of downloading it" do
+          content = File.read("#{File.dirname(__FILE__)}/../view/opengraph_comment_on_html.html")
+
+          RedirectFollower.should_not_receive(:new)
+
+          og = OpenGraph.new(content)
+          og.src.should == content
+          og.title.should == "OpenGraph Title"
+          og.type.should == "article"
+          og.url.should == "http://test.host"
+          og.description.should == "My OpenGraph sample site for Rspec"
+          og.images.should == ["http://test.host/images/rock1.jpg", "http://test.host/images/rock2.jpg"]
+        end
+
+      end
+
       it "should parse body instead of downloading it" do
         content = File.read("#{File.dirname(__FILE__)}/../view/opengraph.html")
         RedirectFollower.should_not_receive(:new)
@@ -111,7 +136,7 @@ describe OpenGraph do
         og.type.should == "article"
         og.url.should == "http://test.host"
         og.description.should == "My OpenGraph sample site for Rspec"
-        og.images.should == ["http://test.host/images/rock1.jpg", "/images/rock2.jpg"]
+        og.images.should == ["http://test.host/images/rock1.jpg", "http://test.host/images/rock2.jpg"]
       end
     end
   end
