@@ -60,7 +60,9 @@ class OpenGraph
         @title = doc.xpath("//head//title").first.text.to_s.strip
       end
 
-      @url = @src if @url.to_s.empty?
+      if @url.to_s.empty? and !@src.include? '</html>'
+        @url = @src
+      end
 
       if @description.to_s.empty? && description_meta = doc.xpath("//head//meta[@name='description']").first
         @description = description_meta.attribute("content").to_s.strip
