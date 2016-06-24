@@ -55,7 +55,7 @@ class OpenGraph
   def load_fallback
     if @body
       doc = Nokogiri.parse(@body)
-
+      parse_as_string
       if @title.to_s.empty? && doc.xpath("//head//title").size > 0
         @title = doc.xpath("//head//title").first.text.to_s.strip
       end
@@ -72,6 +72,24 @@ class OpenGraph
 
       fetch_images(doc, "//head//link[@rel='image_src']", "href") if @images.empty?
       fetch_images(doc, "//img", "src") if @images.empty?
+    end
+  end
+
+  def parse_as_string
+    attrs_list = %w(title url type description)
+    hsh = {}
+    @body.scan(/^\<meta.*\>$/) do |m|
+      property = m.scan(/property=\"og:([a-zA-Z]*)\"/).flatten.first
+      next unless attrs_list.include?(property)
+      value = m.scan(/content=\"([^"]*)\"/).flatten.first
+      hsh.merge!(property => value) unless (property.nil? || value.nil?)
+      @metadata = add_metadata(@metadata, property, value)
+      case property
+        when *attrs_list
+          self.instance_variable_set("@#{property}", value) unless value.empty?
+        when "image"
+          add_image(value)
+      end
     end
   end
 
