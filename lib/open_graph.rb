@@ -29,8 +29,7 @@ class OpenGraph
         @body = RedirectFollower.new(@src, options).resolve.body
       end
     rescue
-      @title = @url = @src
-      return
+      @body = Net::HTTP.get(URI.parse(@src))
     end
 
     if @body
@@ -49,6 +48,8 @@ class OpenGraph
           end
         end
       end
+    else
+      @title = @url = @src
     end
   end
 
@@ -76,13 +77,11 @@ class OpenGraph
   end
 
   def parse_as_string
-    attrs_list = %w(title url type description)
-    hsh = {}
+    attrs_list = %w(title url type description image)
     @body.scan(/^\<meta.*\>$/) do |m|
       property = m.scan(/property=\"og:([a-zA-Z]*)\"/).flatten.first
       next unless attrs_list.include?(property)
       value = m.scan(/content=\"([^"]*)\"/).flatten.first
-      hsh.merge!(property => value) unless (property.nil? || value.nil?)
       @metadata = add_metadata(@metadata, property, value)
       case property
         when *attrs_list
@@ -99,13 +98,18 @@ class OpenGraph
     imgs = @images.dup
     @images = []
     imgs.each do |img|
-      if Addressable::URI.parse(img).host.nil?
-        full_path = uri.join(img).to_s
-        add_image(full_path)
-      else
-        add_image(img)
+      begin
+        if Addressable::URI.parse(img).host.nil?
+          full_path = uri.join(img).to_s
+          add_image(full_path)
+        else
+          add_image(img)
+        end
+      rescue Addressable::URI::InvalidURIError
+        next
       end
     end
+
   end
 
   def add_image(image_url)
