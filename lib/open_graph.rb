@@ -48,6 +48,7 @@ class OpenGraph
           end
         end
       end
+      parse_metadata_as_string if @metadata.empty?
     else
       @title = @url = @src
     end
@@ -56,7 +57,6 @@ class OpenGraph
   def load_fallback
     if @body
       doc = Nokogiri.parse(@body)
-      parse_as_string
       if @title.to_s.empty? && doc.xpath("//head//title").size > 0
         @title = doc.xpath("//head//title").first.text.to_s.strip
       end
@@ -73,22 +73,32 @@ class OpenGraph
 
       fetch_images(doc, "//head//link[@rel='image_src']", "href") if @images.empty?
       fetch_images(doc, "//img", "src") if @images.empty?
+
+      parse_body_as_string_fallback if @title.blank? && @images.blank?
     end
   end
 
-  def parse_as_string
-    attrs_list = %w(title url type description image)
+  def parse_metadata_as_string
+    attrs_list = %w(title url type description)
     @body.scan(/^\<meta.*\>$/) do |m|
       property = m.scan(/property=\"og:([a-zA-Z]*)\"/).flatten.first
-      next unless attrs_list.include?(property)
+      next unless (attrs_list + ['image']).include?(property)
       value = m.scan(/content=\"([^"]*)\"/).flatten.first
       @metadata = add_metadata(@metadata, property, value)
       case property
         when *attrs_list
-          self.instance_variable_set("@#{property}", value) unless value.empty?
+          self.instance_variable_set("@#{property}", value) unless value.blank?
         when "image"
           add_image(value)
       end
+    end
+  end
+
+  def parse_body_as_string_fallback
+    @title = @body.scan(/\<title\>(.*)\<\/title\>/).flatten.first
+    @body.scan(/(img [^\>]*)/).flatten.each do |m|
+      src = m.scan(/src=\"([^"]*)\"/).flatten.first
+      add_image(src)
     end
   end
 
