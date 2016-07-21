@@ -120,6 +120,15 @@ describe OpenGraph do
           og.description.should == "No description meta here."
           og.images.should == ["http://test.host/images/wall1.jpg", "http://test.host/images/wall2.jpg"]
         end
+
+        context "when website has paragraphs shorter than 20 characters" do
+          it "should have an empty description" do
+            response = double(body: File.open("#{File.dirname(__FILE__)}/../view/opengraph_no_meta_nor_description_short_p.html", 'r') { |f| f.read })
+            RedirectFollower.stub(:new) { double(resolve: response) }
+            og = OpenGraph.new("http://test.host/child_page")
+            og.description.should == ""
+          end
+        end
       end
     end
 

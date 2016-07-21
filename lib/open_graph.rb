@@ -108,6 +108,7 @@ class OpenGraph
       s = p.text.to_s.strip
       return s if s.length > 20
     end
+    return ""
   end
 
   def add_metadata(metadata_container, path, content)
