@@ -11,6 +11,13 @@ describe RedirectFollower do
       m
     }
 
+    context "with redirect_limit in options hash" do
+      it "should update redirect_limit" do
+        rf = RedirectFollower.new(url, redirect_limit: 20)
+        rf.redirect_limit.should == 20
+      end
+    end
+
     context "with no redirection" do
       it "should return the response" do
         uri = URI.parse(URI.escape(url))
