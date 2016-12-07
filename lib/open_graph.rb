@@ -23,14 +23,10 @@ class OpenGraph
   private
   def parse_opengraph(options = {})
     begin
-      if @src.include? '</html>'
-        @body = @src
-      else
-        @body = RedirectFollower.new(@src, options).resolve.body
-      end
+      uri = URI.parse(@src)
+      @body = RedirectFollower.new(@src, options).resolve.body
     rescue
-      @title = @url = @src
-      return
+      @body = @src
     end
 
     if @body
@@ -60,7 +56,9 @@ class OpenGraph
         @title = doc.xpath("//head//title").first.text.to_s.strip
       end
 
-      @url = @src if @url.to_s.empty?
+      if @url.to_s.empty? and !@src.include? '</html>'
+        @url = @src
+      end
 
       if @description.to_s.empty? && description_meta = doc.xpath("//head//meta[@name='description']").first
         @description = description_meta.attribute("content").to_s.strip
@@ -77,7 +75,7 @@ class OpenGraph
 
   def check_images_path
     @original_images = @images.dup
-    uri = Addressable::URI.parse(@src)
+    uri = Addressable::URI.parse(@url || @src)
     imgs = @images.dup
     @images = []
     imgs.each do |img|
@@ -88,6 +86,7 @@ class OpenGraph
         add_image(img)
       end
     end
+  rescue Exception => ex
   end
 
   def add_image(image_url)
@@ -105,6 +104,7 @@ class OpenGraph
       s = p.text.to_s.strip
       return s if s.length > 20
     end
+    return ""
   end
 
   def add_metadata(metadata_container, path, content)

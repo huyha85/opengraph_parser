@@ -9,7 +9,7 @@ class RedirectFollower
   def initialize(url, limit = REDIRECT_DEFAULT_LIMIT, options = {})
     if limit.is_a? Hash
       options = limit
-      limit = REDIRECT_DEFAULT_LIMIT
+      limit = options[:redirect_limit] || REDIRECT_DEFAULT_LIMIT
     end
     @url, @redirect_limit = url, limit
     @headers = options[:headers] || {}
