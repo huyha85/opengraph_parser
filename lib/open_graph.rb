@@ -23,7 +23,7 @@ class OpenGraph
   private
   def parse_opengraph(options = {})
     begin
-      uri = URI.parse(@src)
+      URI.parse(@src)
       @body = RedirectFollower.new(@src, options).resolve.body
     rescue
       @body = @src

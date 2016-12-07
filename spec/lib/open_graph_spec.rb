@@ -162,6 +162,19 @@ describe OpenGraph do
         og.description.should == "My OpenGraph sample site for Rspec"
         og.images.should == ["http://test.host/images/rock1.jpg", "http://test.host/images/rock2.jpg"]
       end
+
+      context 'the given src has no closing <html> tag' do
+        it 'assigns @body to @src and gets values from og metadata anyway' do
+          source = File.read("#{File.dirname(__FILE__)}/../view/opengraph_bad_html.html")
+          og = OpenGraph.new(source)
+          og.src.should == source
+          og.title.should == "OpenGraph Title"
+          og.type.should == "article"
+          og.url.should == "http://test.host"
+          og.description.should == "My bad OpenGraph sample site for Rspec"
+          og.images.should == ["http://test.host/images/bad_rock1.jpg"]
+        end
+      end
     end
   end
 end
