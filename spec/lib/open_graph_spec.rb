@@ -3,10 +3,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe OpenGraph do
   describe "#initialize" do
     context "with invalid src" do
-      it "should set title and url the same as src" do
+      it "should set the url to the same as src" do
         og = OpenGraph.new("invalid")
         og.src.should == "invalid"
-        og.title.should == "invalid"
+        og.title.should == nil
         og.url.should == "invalid"
       end
     end
