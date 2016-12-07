@@ -3,10 +3,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe OpenGraph do
   describe "#initialize" do
     context "with invalid src" do
-      it "should set title and url the same as src" do
+      it "should set the url to the same as src" do
         og = OpenGraph.new("invalid")
         og.src.should == "invalid"
-        og.title.should == "invalid"
+        og.title.should == nil
         og.url.should == "invalid"
       end
     end
@@ -161,6 +161,19 @@ describe OpenGraph do
         og.url.should == "http://test.host"
         og.description.should == "My OpenGraph sample site for Rspec"
         og.images.should == ["http://test.host/images/rock1.jpg", "http://test.host/images/rock2.jpg"]
+      end
+
+      context 'the given src has no closing <html> tag' do
+        it 'assigns @body to @src and gets values from og metadata anyway' do
+          source = File.read("#{File.dirname(__FILE__)}/../view/opengraph_bad_html.html")
+          og = OpenGraph.new(source)
+          og.src.should == source
+          og.title.should == "OpenGraph Title"
+          og.type.should == "article"
+          og.url.should == "http://test.host"
+          og.description.should == "My bad OpenGraph sample site for Rspec"
+          og.images.should == ["http://test.host/images/bad_rock1.jpg"]
+        end
       end
     end
   end

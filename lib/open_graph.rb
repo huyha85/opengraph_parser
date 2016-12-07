@@ -23,14 +23,10 @@ class OpenGraph
   private
   def parse_opengraph(options = {})
     begin
-      if @src.include? '</html>'
-        @body = @src
-      else
-        @body = RedirectFollower.new(@src, options).resolve.body
-      end
+      URI.parse(@src)
+      @body = RedirectFollower.new(@src, options).resolve.body
     rescue
-      @title = @url = @src
-      return
+      @body = @src
     end
 
     if @body
