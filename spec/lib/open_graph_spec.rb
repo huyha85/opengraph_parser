@@ -113,6 +113,25 @@ describe OpenGraph do
         og.description.should == "My OpenGraph sample site for Rspec"
         og.images.should == ["http://test.host/images/rock1.jpg", "/images/rock2.jpg"]
       end
+
+      it "does not confuse twitter:title as url" do
+        content = <<-eos
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta name="twitter:title" property="og:title" itemprop="title name" content="OpenGraph Title" />
+              <meta property="og:url" content="https://www.example.com/page.html" />
+            </head>
+          </html>
+        eos
+
+        RedirectFollower.should_not_receive(:new)
+
+        og = OpenGraph.new(content)
+        og.src.should == content
+        og.title.should == "OpenGraph Title"
+        og.url.should == "https://www.example.com/page.html"
+      end
     end
   end
 end
