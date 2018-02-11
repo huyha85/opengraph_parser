@@ -5,6 +5,7 @@ require 'uri'
 
 class OpenGraph
   attr_accessor :src, :url, :type, :title, :description, :images, :metadata, :response, :original_images
+  WHITELISTED_SCHEMES = Addressable::URI::PORT_MAPPING.keys.freeze
 
   def initialize(src, fallback = true, options = {})
     if fallback.is_a? Hash
@@ -22,15 +23,12 @@ class OpenGraph
 
   private
   def parse_opengraph(options = {})
-    begin
-      if @src.include? '</html>'
-        @body = @src
-      else
-        @body = RedirectFollower.new(@src, options).resolve.body
-      end
-    rescue
+    if @src.include? '</html>'
+      @body = @src
+    elsif url?(@src)
+      @body = RedirectFollower.new(@src, options).resolve.body
+    else
       @title = @url = @src
-      return
     end
 
     if @body
@@ -60,7 +58,7 @@ class OpenGraph
         @title = doc.xpath("//head//title").first.text.to_s.strip
       end
 
-      @url = @src if @url.to_s.empty?
+      @url = @src if @url.to_s.empty? && url?(@src)
 
       if @description.to_s.empty? && description_meta = doc.xpath("//head//meta[@name='description']").first
         @description = description_meta.attribute("content").to_s.strip
@@ -127,5 +125,12 @@ class OpenGraph
       metadata_container[path.to_sym] << {'_value'.to_sym => content}
       metadata_container
     end
+  end
+
+  def url?(url)
+    parsed = Addressable::URI.parse(url)
+    !!parsed.host && WHITELISTED_SCHEMES.include?(parsed.scheme)
+  rescue Addressable::URI::InvalidURIError
+    false
   end
 end
