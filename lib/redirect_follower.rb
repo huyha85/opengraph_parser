@@ -18,7 +18,7 @@ class RedirectFollower
   def resolve
     raise TooManyRedirects if redirect_limit < 0
 
-    uri = URI.parse(URI.escape(url))
+    uri = Addressable::URI.parse(url)
 
     http = Net::HTTP.new(uri.host, uri.port)
     if uri.scheme == 'https'

@@ -1,7 +1,6 @@
 require 'nokogiri'
 require 'redirect_follower'
 require "addressable/uri"
-require 'uri'
 
 class OpenGraph
   attr_accessor :src, :url, :type, :title, :description, :images, :metadata, :response, :original_images
