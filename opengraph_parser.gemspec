@@ -5,16 +5,16 @@
 
 Gem::Specification.new do |s|
   s.name = "opengraph_parser"
-  s.version = "0.2.3"
+  s.version = "0.2.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Huy Ha", "Duc Trinh"]
-  s.date = "2013-05-23"
+  s.date = "2021-12-23"
   s.description = "A simple Ruby library for parsing Open Graph Protocol information from a website. It also includes a fallback solution when the website has no Open Graph information."
   s.email = "hhuy424@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE.txt",
-    "README.rdoc"
+    "README.md"
   ]
   s.files = [
     "lib/open_graph.rb",
@@ -54,4 +54,3 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<jeweler>, [">= 0"])
   end
 end
-
