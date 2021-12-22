@@ -9,7 +9,6 @@ group :development do
   gem "rspec"
   gem "rdoc"
   gem "bundler"
-  gem "jeweler"
 end
 
 gem "nokogiri"
