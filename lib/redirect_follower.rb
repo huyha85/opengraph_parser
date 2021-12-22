@@ -6,12 +6,9 @@ class RedirectFollower
 
   attr_accessor :url, :body, :redirect_limit, :response, :headers
 
-  def initialize(url, limit = REDIRECT_DEFAULT_LIMIT, options = {})
-    if limit.is_a? Hash
-      options = limit
-      limit = REDIRECT_DEFAULT_LIMIT
-    end
-    @url, @redirect_limit = url, limit
+  def initialize(url, options = {})
+    @url = url
+    @redirect_limit = options[:redirect_limit] || REDIRECT_DEFAULT_LIMIT
     @headers = options[:headers] || {}
   end
 
