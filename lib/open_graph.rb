@@ -4,7 +4,7 @@ require "addressable/uri"
 require 'uri'
 
 class OpenGraph
-  attr_accessor :src, :url, :type, :title, :description, :images, :metadata, :response, :original_images
+  attr_accessor :src, :url, :type, :title, :description, :images, :metadata, :response, :original_images, :html_content
 
   def initialize(src, fallback = true, options = {})
     if fallback.is_a? Hash
@@ -25,8 +25,10 @@ class OpenGraph
     begin
       if @src.include? '</html>'
         @body = @src
+        @html_content = true
       else
         @body = RedirectFollower.new(@src, options).resolve.body
+        @html_content = false
       end
     rescue
       @title = @url = @src
@@ -77,6 +79,8 @@ class OpenGraph
 
   def check_images_path
     @original_images = @images.dup
+    return if @html_content
+
     uri = Addressable::URI.parse(@src)
     imgs = @images.dup
     @images = []
