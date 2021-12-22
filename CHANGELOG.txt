@@ -1,3 +1,6 @@
+Version 0.2.3
+- Support passing html body as parameter
+
 Version 0.2.2
 - Fix major bug on 0.2.1 causing normal http request not working.
 
