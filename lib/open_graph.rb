@@ -79,9 +79,11 @@ class OpenGraph
 
   def check_images_path
     @original_images = @images.dup
-    return if @html_content
 
-    uri = Addressable::URI.parse(@src)
+    uri = Addressable::URI.parse(@url || @src)
+
+    return unless uri
+
     imgs = @images.dup
     @images = []
     imgs.each do |img|

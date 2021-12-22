@@ -111,7 +111,7 @@ describe OpenGraph do
         og.type.should == "article"
         og.url.should == "http://test.host"
         og.description.should == "My OpenGraph sample site for Rspec"
-        og.images.should == ["http://test.host/images/rock1.jpg", "/images/rock2.jpg"]
+        og.images.should == ["http://test.host/images/rock1.jpg", "http://test.host/images/rock2.jpg"]
       end
     end
   end
