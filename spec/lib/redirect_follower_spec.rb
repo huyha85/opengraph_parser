@@ -13,7 +13,7 @@ describe RedirectFollower do
 
     context "with no redirection" do
       it "should return the response" do
-        uri = URI.parse(URI.escape(url))
+        uri = Addressable::URI.parse(url)
 
         http = Net::HTTP.new(uri.host, uri.port)
         Net::HTTP.should_receive(:new).with(uri.host, uri.port).and_return(http)
@@ -26,7 +26,7 @@ describe RedirectFollower do
 
       describe "and uri scheme is HTTPS" do
         it "should use https method to retrieve the uri" do
-          uri = URI.parse(URI.escape(https_url))
+          uri = Addressable::URI.parse(url)
 
           https = Net::HTTP.new(uri.host, uri.port)
           Net::HTTP.should_receive(:new).with(uri.host, uri.port).and_return(https)
@@ -40,7 +40,7 @@ describe RedirectFollower do
 
       describe "and has headers option" do
         it "should add headers when retrieve the uri" do
-          uri = URI.parse(URI.escape(url))
+          uri = Addressable::URI.parse(url)
 
           http = Net::HTTP.new(uri.host, uri.port)
           Net::HTTP.should_receive(:new).with(uri.host, uri.port).and_return(http)
@@ -54,7 +54,7 @@ describe RedirectFollower do
 
     context "with redirection" do
       it "should follow the link in redirection" do
-        uri = URI.parse(URI.escape(url))
+        uri = Addressable::URI.parse(url)
 
         http = Net::HTTP.new(uri.host, uri.port)
         Net::HTTP.should_receive(:new).twice.and_return(http)
@@ -68,7 +68,7 @@ describe RedirectFollower do
 
     context "with unlimited redirection" do
       it "should raise TooManyRedirects error" do
-        uri = URI.parse(URI.escape(url))
+        uri = Addressable::URI.parse(url)
 
         http = Net::HTTP.new(uri.host, uri.port)
         Net::HTTP.stub(:new).and_return(http)
