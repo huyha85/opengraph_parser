@@ -15,8 +15,8 @@ describe RedirectFollower do
       it "should return the response" do
         uri = Addressable::URI.parse(url)
 
-        http = Net::HTTP.new(uri.host, uri.port)
-        Net::HTTP.should_receive(:new).with(uri.host, uri.port).and_return(http)
+        http = Net::HTTP.new(uri.host, uri.inferred_port)
+        Net::HTTP.should_receive(:new).with(uri.host, uri.inferred_port).and_return(http)
         http.should_receive(:request_get).and_return(mock_res)
 
         res = RedirectFollower.new(url).resolve
@@ -28,8 +28,8 @@ describe RedirectFollower do
         it "should use https method to retrieve the uri" do
           uri = Addressable::URI.parse(url)
 
-          https = Net::HTTP.new(uri.host, uri.port)
-          Net::HTTP.should_receive(:new).with(uri.host, uri.port).and_return(https)
+          https = Net::HTTP.new(uri.host, uri.inferred_port)
+          Net::HTTP.should_receive(:new).with(uri.host, uri.inferred_port).and_return(https)
           https.should_receive(:request_get).and_return(mock_res)
 
           res = RedirectFollower.new(https_url).resolve
@@ -42,8 +42,8 @@ describe RedirectFollower do
         it "should add headers when retrieve the uri" do
           uri = Addressable::URI.parse(url)
 
-          http = Net::HTTP.new(uri.host, uri.port)
-          Net::HTTP.should_receive(:new).with(uri.host, uri.port).and_return(http)
+          http = Net::HTTP.new(uri.host, uri.inferred_port)
+          Net::HTTP.should_receive(:new).with(uri.host, uri.inferred_port).and_return(http)
           http.should_receive(:request_get).and_return(mock_res)
           res = RedirectFollower.new(url, {:headers => {'User-Agent' => 'My Custom User-Agent'}}).resolve
           res.body.should == "Body is here."
@@ -56,7 +56,7 @@ describe RedirectFollower do
       it "should follow the link in redirection" do
         uri = Addressable::URI.parse(url)
 
-        http = Net::HTTP.new(uri.host, uri.port)
+        http = Net::HTTP.new(uri.host, uri.inferred_port)
         Net::HTTP.should_receive(:new).twice.and_return(http)
         http.should_receive(:request_get).twice.and_return(mock_redirect, mock_res)
 
@@ -70,7 +70,7 @@ describe RedirectFollower do
       it "should raise TooManyRedirects error" do
         uri = Addressable::URI.parse(url)
 
-        http = Net::HTTP.new(uri.host, uri.port)
+        http = Net::HTTP.new(uri.host, uri.inferred_port)
         Net::HTTP.stub(:new).and_return(http)
         http.stub(:request_get).and_return(mock_redirect)
 
